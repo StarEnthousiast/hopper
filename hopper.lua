@@ -2,12 +2,12 @@ repeat wait() until game:IsLoaded()
 
 local function jumpToServer() 
 local sfUrl = "https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=%s&limit=%s&excludeFullGames=true" 
-local req = request({ Url = string.format(sfUrl, 16498369169, "Desc", 50) }) 
+local req = request({ Url = string.format(sfUrl, 17601705136, "Desc", 50) }) 
 local body = game:GetService("HttpService"):JSONDecode(req.Body) 
 local deep = math.random(1, 3)
 if deep > 1 then 
     for i = 1, deep, 1 do 
-        req = request({ Url = string.format(sfUrl .. "&cursor=" .. body.nextPageCursor, 16498369169, "Desc", 50) }) 
+        req = request({ Url = string.format(sfUrl .. "&cursor=" .. body.nextPageCursor, 17601705136, "Desc", 50) }) 
         body = game:GetService("HttpService"):JSONDecode(req.Body) 
         task.wait(0.1)
     end 
@@ -24,7 +24,7 @@ if body and body.data then
     if not randomCount then
         randomCount = 2
     end
-    game:GetService("TeleportService"):TeleportToPlaceInstance(16498369169, servers[math.random(1, randomCount)], game:GetService("Players").LocalPlayer) 
+    game:GetService("TeleportService"):TeleportToPlaceInstance(17601705136, servers[math.random(1, randomCount)], game:GetService("Players").LocalPlayer) 
 end
 
 while wait(1) do
