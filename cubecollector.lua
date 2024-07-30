@@ -134,8 +134,7 @@ local function teleportPlayer()
         print("Player or their character not found.")
     end
 end
-teleportPlayer()
-fireTouchDetectors()
+
 local function fireTouchDetectors()
     for _, cubeName in ipairs(cubeNames) do
         local cubeModel = game.Workspace:FindFirstChild(cubeName)
@@ -386,7 +385,6 @@ local function createGui()
     end)
 
     local initialPosition
-	
 
     local function toggleTeleport()
         teleporting = not teleporting
@@ -434,13 +432,12 @@ local function createGui()
                 wait(1.5)
             end)
         else
-            FireTouchDetectorsButton:TweenSizeAndPosition(UDim2.new(1, -10, 1, -10), UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.2, true)
-            FireTouchDetectorsButton.BackgroundColor3 = Color3.fromRGB(85, 255, 85)
-            FireTouchDetectorsButton.Text = "On"
-            fireTouchConnection = game:GetService("RunService").Stepped:Connect(function()
-                fireTouchDetectors()
-                wait(1.5)
-            end)
+            FireTouchDetectorsButton:TweenSizeAndPosition(UDim2.new(0.5, -5, 1, -10), UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.2, true)
+            FireTouchDetectorsButton.BackgroundColor3 = Color3.fromRGB(85, 85, 85)
+            FireTouchDetectorsButton.Text = "Off"
+            if fireTouchConnection then
+                fireTouchConnection:Disconnect()
+            end
         end
     end
 
@@ -663,7 +660,10 @@ local function simulateMovement()
         humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.new(0, 0, 0.3)   -- Move forward
     end
 end
-
+while true do
+    fireTouchDetectors()
+    wait(1)
+end
 while true do
     simulateMovement()
     wait(60)
