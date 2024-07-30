@@ -134,7 +134,7 @@ local function teleportPlayer()
         print("Player or their character not found.")
     end
 end
-
+teleportPlayer()
 local function fireTouchDetectors()
     for _, cubeName in ipairs(cubeNames) do
         local cubeModel = game.Workspace:FindFirstChild(cubeName)
@@ -385,6 +385,7 @@ local function createGui()
     end)
 
     local initialPosition
+	
 
     local function toggleTeleport()
         teleporting = not teleporting
