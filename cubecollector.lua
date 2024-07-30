@@ -30,7 +30,6 @@ local cubeColors = {
     ["Stellar Nebula"] = "#ffffff"
 }
 
-local BringCubes = true
 local notifiedCubes = {}
 local webhookUrl = 'https://discord.com/api/webhooks/1267509979179384904/Rjbr-dhjFDs6t-e6RaEyBqeBrsCPWs7vMNXwf-qyD6kMCrdyv03s1Mzxxhc_oA6zK2xd'
 local userId = '370943880767471617'
@@ -420,7 +419,7 @@ local function createGui()
             end
         end
     end
-    local fireTouchEnabled = true
+
     local function toggleFireTouchDetectors()
         fireTouchEnabled = not fireTouchEnabled
 
