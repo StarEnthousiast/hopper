@@ -29,7 +29,7 @@ local cubeColors = {
     ["Event Horizon"] = "#6854ff",
     ["Stellar Nebula"] = "#ffffff"
 }
-local fireTouchEnabled = true -- Set default state to true
+
 local notifiedCubes = {}
 local webhookUrl = 'https://discord.com/api/webhooks/1267509979179384904/Rjbr-dhjFDs6t-e6RaEyBqeBrsCPWs7vMNXwf-qyD6kMCrdyv03s1Mzxxhc_oA6zK2xd'
 local userId = '370943880767471617'
@@ -432,17 +432,15 @@ local function createGui()
                 wait(1.5)
             end)
         else
-            FireTouchDetectorsButton:TweenSizeAndPosition(UDim2.new(0.5, -5, 1, -10), UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.2, true)
-            FireTouchDetectorsButton.BackgroundColor3 = Color3.fromRGB(85, 85, 85)
-            FireTouchDetectorsButton.Text = "Off"
-            if fireTouchConnection then
-                fireTouchConnection:Disconnect()
-            end
+            FireTouchDetectorsButton:TweenSizeAndPosition(UDim2.new(1, -10, 1, -10), UDim2.new(0, 5, 0, 5), "Out", "Quad", 0.2, true)
+            FireTouchDetectorsButton.BackgroundColor3 = Color3.fromRGB(85, 255, 85)
+            FireTouchDetectorsButton.Text = "On"
+            fireTouchConnection = game:GetService("RunService").Stepped:Connect(function()
+                fireTouchDetectors()
+                wait(1.5)
+            end)
         end
     end
-
-    -- Initial call to ensure the fireTouchEnabled state is applied
-    toggleFireTouchDetectors()
 
     local function toggleAntiAfk()
         antiAfkEnabled = not antiAfkEnabled
