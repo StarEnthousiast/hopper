@@ -29,7 +29,7 @@ local cubeColors = {
     ["Event Horizon"] = "#6854ff",
     ["Stellar Nebula"] = "#ffffff"
 }
-
+local fireTouchEnabled = true -- Set default state to true
 local notifiedCubes = {}
 local webhookUrl = 'https://discord.com/api/webhooks/1267509979179384904/Rjbr-dhjFDs6t-e6RaEyBqeBrsCPWs7vMNXwf-qyD6kMCrdyv03s1Mzxxhc_oA6zK2xd'
 local userId = '370943880767471617'
@@ -440,6 +440,9 @@ local function createGui()
             end
         end
     end
+
+    -- Initial call to ensure the fireTouchEnabled state is applied
+    toggleFireTouchDetectors()
 
     local function toggleAntiAfk()
         antiAfkEnabled = not antiAfkEnabled
