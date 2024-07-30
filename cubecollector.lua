@@ -135,6 +135,7 @@ local function teleportPlayer()
     end
 end
 teleportPlayer()
+fireTouchDetectors()
 local function fireTouchDetectors()
     for _, cubeName in ipairs(cubeNames) do
         local cubeModel = game.Workspace:FindFirstChild(cubeName)
