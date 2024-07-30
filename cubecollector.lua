@@ -1,4 +1,7 @@
 local cubeNames = {
+    "Silent Speed of Snow",
+    "Fortune of Wind",
+    "Roll of Glitch",
     "Luck Cube",
     "Speed Cube",
     "Inferno Cube",
