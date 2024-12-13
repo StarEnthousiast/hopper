@@ -1,5 +1,4 @@
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
-
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/lucasr125/Bracket_Orion/main/orionlib.lua')))();
 local localplr = game.Players.LocalPlayer
 local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 local plot
@@ -7,89 +6,65 @@ local plot
 repeat task.wait() until localplr.Values.Plot.Value ~= nil
 plot = localplr.Values.Plot.Value
 
-Rayfield:CreateWindow({
-   Name = GameName,
-   LoadingTitle = "Loading...",
-   LoadingSubtitle = "Initializing...",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "RayfieldConfig"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "sirius",
-      RememberJoins = true
-   },
-   KeySystem = false,
-})
+OrionLib:MakeNotification({Name = "Hello!",Content = "Script Version: 2.c",Image = "rbxassetid://4483345998",Time = 5})
 
-local Tab = Rayfield:CreateTab("Main", 4483365998)
+local Window = OrionLib:MakeWindow({Name = GameName, HidePremium = false, SaveConfig = true, ConfigFolder = "OrionLib"})
+local Tab = Window:MakeTab({Name = "Main",Icon = "rbxassetid://4483345998",PremiumOnly = false})
 
 local settings = {
-    autoobby = false,
-    obbycooldown = 0.1,
-    autojar = false,
-    autoblender = false,
-    autosendcrate = false,
-    autobuy = false,
-    includeupgraders = true,
-    buycooldown = 1,
-    autogetdrops = false,
-    autorebirth = false,
-    fastarm = false,
+    ["autoobby"] = false,
+    ["obbycooldown"] = 0.1,
+    ["autojar"] = false,
+    ["autoblender"] = false,
+    ["autosendcrate"] = false,
+    ["autobuy"] = false,
+    ["includeupgraders"] = true,
+    ["buycooldown"] = 1,
+    ["autogetdrops"] = false,
+    ["autorebirth"] = false,
+    ["fastarm"] = false,
+    ["delay"] = 1,  -- Added delay setting
 }
 
-Rayfield:CreateNotification({
-    Name = "Hello!",
-    Content = "Script Version: 2.c",
-    Duration = 5
-})
+OrionLib:MakeNotification({Name = "Successfully initialized plot!",Content = "All farming features are now available",Image = "rbxassetid://4483345998",Time = 5})
 
-Rayfield:CreateNotification({
-    Name = "Successfully initialized plot!",
-    Content = "All farming features are now available",
-    Duration = 5
-})
-
-local autoobbyToggle = Tab:CreateToggle({
-    Name = "Auto obby",
-    CurrentValue = settings.autoobby,
+-- Input box for setting delay
+Tab:AddTextbox({
+    Name = "Set Delay (seconds)",
+    Default = tostring(settings["delay"]),
+    TextDisappear = true,
     Callback = function(Value)
-        settings.autoobby = Value
-        if settings.autoobby then
-            while settings.autoobby and localplr.Character and localplr.Character.Head and localplr.Character.Humanoid.Health == 100 do
-                firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.HardObby.Finish.Button, 0)
-                firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.HardObby.Finish.Button, 1)
-                firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.EasyObby.Finish.Button, 0)
-                firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.EasyObby.Finish.Button, 1)
-                task.wait(settings.obbycooldown)
-            end
+        settings["delay"] = tonumber(Value) or 1  -- Update delay setting
+    end
+})
+
+local autoobbyToggle = Tab:AddToggle({Name = "Auto obby",Default = settings["autoobby"],Callback = function(Value)
+    settings["autoobby"] = Value
+    if settings["autoobby"] == true then
+        while settings["autoobby"] == true and localplr.Character and localplr.Character.Head and localplr.Character.Humanoid.Health == 100 do
+            firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.HardObby.Finish.Button, 0)
+            firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.HardObby.Finish.Button, 1)
+            firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.EasyObby.Finish.Button, 0)
+            firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.EasyObby.Finish.Button, 1)
+            task.wait(settings["obbycooldown"] + settings["delay"])  -- Use delay here
         end
     end
-})
+end})
 
-local obbycooldownSlider = Tab:CreateSlider({
-    Name = "Set obby cooldown",
-    Range = {0, 10},
-    Increment = 0.1,
-    CurrentValue = settings.obbycooldown,
-    Suffix = "seconds",
-    Callback = function(Value)
-        settings.obbycooldown = Value
-    end
-})
+local obbycooldownSlider = Tab:AddSlider({Name = "Set obby cooldown",Min = 0,Max = 10,Default = settings["obbycooldown"],Color = Color3.fromRGB(255,255,255),Increment = 0.1,ValueName = "cooldown",Callback = function(Value)
+    settings["obbycooldown"] = Value
+end});
 
-local autobuyToggle = Tab:CreateToggle({
+local autobuyToggle = Tab:AddToggle({
     Name = "Auto buy",
-    CurrentValue = settings.autobuy,
+    Default = settings["autobuy"],
     Callback = function(Value)
-        settings.autobuy = Value
-        if settings.autobuy then
-            while settings.autobuy and localplr.Character and localplr.Character.Humanoid.Health == 100 do
-                task.wait(settings.buycooldown)
-                if not settings.includeupgraders then
-                    for _, v in pairs(plot.PurchaseButtons:GetDescendants()) do
+        settings["autobuy"] = Value
+        if settings["autobuy"] == true then
+            while settings["autobuy"] and localplr.Character and localplr.Character.Humanoid.Health == 100 do
+                task.wait(settings["buycooldown"] + settings["delay"])  -- Use delay here
+                if settings["includeupgraders"] == false then
+                    for i, v in pairs(plot.PurchaseButtons:GetDescendants()) do
                         if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) then
                             local button1 = v
                             local bCFrame1 = v.CFrame
@@ -97,126 +72,256 @@ local autobuyToggle = Tab:CreateToggle({
                                 button1.CanCollide = false
                                 button1.Transparency = 1
                                 button1.CFrame = localplr.Character.HumanoidRootPart.CFrame
-                                task.wait(settings.buycooldown / 2)
+                                task.wait(settings["buycooldown"]/2)
                                 button1.CFrame = bCFrame1
                                 button1.Transparency = 0
-                                button1.CanCollide = true
+                                button1.CanCollide = true 
                             end))
-                        end
+                        end                
                     end
-                else
-                    for _, v in pairs(plot.PurchaseButtons:GetDescendants()) do
+                elseif settings["includeupgraders"] == true then
+                    for i, v in pairs(plot.PurchaseButtons:GetDescendants()) do
                         if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) then
                             local button1 = v
                             local bCFrame1 = v.CFrame
                             coroutine.resume(coroutine.create(function()
-                                button1.CanColl ide = false
+                                button1.CanCollide = false
                                 button1.Transparency = 1
                                 button1.CFrame = localplr.Character.HumanoidRootPart.CFrame
-                                task.wait(settings.buycooldown / 2)
+                                task.wait(settings["buycooldown"]/2)
                                 button1.CFrame = bCFrame1
                                 button1.Transparency = 0
-                                button1.CanCollide = true
+                                button1.CanCollide = true 
                             end))
+                        end                
+                    end
+                    for i, v in pairs(plot.UpgradeButtons:GetDescendants()) do
+                        if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) then
+                            local button2 = v
+                            local bCFrame2 = v.CFrame
+                            coroutine.resume(coroutine.create(function()
+                                button2.CanCollide = false
+                                button2.Transparency = 1
+                                button2.CFrame = localplr.Character.HumanoidRootPart.CFrame
+                                task.wait(settings["buycooldown"]/2)
+                                button2.CFrame = bCFrame2
+                                button2.Transparency = 0
+                                button2.CanCollide = true 
+                            end))
+                        end                
+                    end
+                end
+            end
+        end
+    end
+})
+
+local includeupgradersToggle = Tab:AddToggle({Name = "Include upgraders buttons",Default = settings["includeupgraders"],Callback = function(Value)
+    settings["includeupgraders"] = Value
+end})
+
+local buycooldownSlider = Tab:AddSlider({Name = "Set buy cooldown",Min = 1,Max = 10,Default = settings["buycooldown"],Color = Color3.fromRGB(255,255,255),Increment = 0.1,ValueName = "cooldown",Callback = function(Value)
+    settings["buycooldown"] = Value
+end});
+
+local autojarToggle = Tab:AddToggle({Name = "Auto jar ( wip )",Default = settings["autojar"],Callback = function(Value)
+    settings["autojar"] = Value
+    if settings["autojar"] == true then
+        while settings["autojar"] == true do
+            task.wait()
+            for i, v in pairs(plot.ProcessingMachines:GetChildren()) do
+                if v.Name == "Main_JarFactory" then
+                    if v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("OpenDoorPrompt") and v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Cooldown") then
+                        local doorPrompt = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("OpenDoorPrompt")
+                        local cooldownGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Cooldown")
+                        local arrowGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Arrow")
+
+                        if cooldownGui.TextLabel.Text == "0" or cooldownGui.TextLabel.Text == "?" or arrowGui then
+                            if localplr.Character and localplr.Character.HumanoidRootPart then
+                                local oldPosition = localplr.Character.HumanoidRootPart.CFrame
+
+                                repeat
+                                    task.wait()
+                                    localplr.Character.HumanoidRootPart.CFrame = doorPrompt.Parent.Parent.CFrame
+                                    keypress(0x45)
+                                    keyrelease(0x45)
+                                until cooldownGui.TextLabel.Text ~= "0" or cooldownGui.TextLabel.Text ~= "?"
+
+                                localplr.Character.HumanoidRootPart.CFrame = oldPosition
+                            end
+                        end
+                    end
+                end
+                if v.Name == "Basement_JarFactory" and localplr.leaderstats.Rebirths.Value >= 6 then
+                    if v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("OpenDoorPrompt") and v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Cooldown") then
+                        local doorPrompt = v:Find ```lua
+FirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("OpenDoorPrompt")
+                        local cooldownGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Cooldown")
+                        local arrowGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Arrow")
+
+                        if cooldownGui.TextLabel.Text == "0" or cooldownGui.TextLabel.Text == "?" or arrowGui then
+                            if localplr.Character and localplr.Character.HumanoidRootPart then
+                                local oldPosition = localplr.Character.HumanoidRootPart.CFrame
+
+                                repeat
+                                    task.wait()
+                                    localplr.Character.HumanoidRootPart.CFrame = doorPrompt.Parent.Parent.CFrame
+                                    keypress(0x45)
+                                    keyrelease(0x45)
+                                until cooldownGui.TextLabel.Text ~= "0" or cooldownGui.TextLabel.Text ~= "?"
+
+                                localplr.Character.HumanoidRootPart.CFrame = oldPosition
+                            end
                         end
                     end
                 end
             end
         end
     end
-})
+end})
 
-local includeUpgradersToggle = Tab:CreateToggle({
-    Name = "Include Upgraders",
-    CurrentValue = settings.includeupgraders,
-    Callback = function(Value)
-        settings.includeupgraders = Value
-    end
-})
+Tab:AddToggle({Name = "Auto send crate ( wip )",Default = settings["autosendcrate"],Callback = function(Value)
+    settings["autosendcrate"] = Value
+    if settings["autosendcrate"] == true then
+        while settings["autosendcrate"] == true do
+            task.wait()
+            for i, v in pairs(plot.ProcessingMachines:GetChildren()) do
+                if v.Name == "Main_JarPackager" then
+                    if v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("ArrowAttachment"):FindFirstChild("Arrow") then
+                        local arrowGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("ArrowAttachment"):FindFirstChild("Arrow")
 
-local fastArmToggle = Tab:CreateToggle({
-    Name = "Fast Arm",
-    CurrentValue = settings.fastarm,
-    Callback = function(Value)
-        settings.fastarm = Value
-        if settings.fastarm then
-            while settings.fastarm do
-                local player = localplr.Character
-                if player and player:FindFirstChild("Humanoid") then
-                    player.Humanoid.WalkSpeed = 50
-                    task.wait(0.1)
-                end
-            end
-        else
-            if localplr.Character and localplr.Character:FindFirstChild("Humanoid") then
-                localplr.Character.Humanoid.WalkSpeed = 16
-            end
-        end
-    end
-})
+                        if localplr.Character and localplr.Character.Humanoid.Health == 100 and localplr.Character.HumanoidRootPart then
+                            local oldPosition = localplr.Character.HumanoidRootPart.CFrame
 
-local autoGetDropsToggle = Tab:CreateToggle({
-    Name = "Auto Get Drops",
-    CurrentValue = settings.autogetdrops,
-    Callback = function(Value)
-        settings.autogetdrops = Value
-        if settings.autogetdrops then
-            while settings.autogetdrops do
-                for _, drop in pairs(workspace.Drops:GetChildren()) do
-                    if drop:IsA("Part") and (drop.Position - localplr.Character.HumanoidRootPart.Position).magnitude < 10 then
-                        firetouchinterest(localplr.Character.HumanoidRootPart, drop, 0)
-                        firetouchinterest(localplr.Character.HumanoidRootPart, drop, 1)
+                            repeat
+                                task.wait()
+                                localplr.Character.HumanoidRootPart.CFrame = v:FindFirstChild("Button"):FindFirstChild("Button").CFrame
+                                keypress(0x45)
+                                keyrelease(0x45)
+                            until v:FindFirstChild("Crates"):FindFirstChild("Main_JarPackager_Crate") == nil
+
+                            localplr.Character.HumanoidRootPart.CFrame = oldPosition
+                        end
                     end
                 end
-                task.wait(1)
+                if v.Name == "Basement_JarPackager" and localplr.leaderstats.Rebirths.Value >= 6 then
+                    if v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("ArrowAttachment"):FindFirstChild("Arrow") then
+                        local arrowGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("ArrowAttachment"):FindFirstChild("Arrow")
+
+                        if localplr.Character and localplr.Character.Humanoid.Health == 100 and localplr.Character.HumanoidRootPart then
+                            local oldPosition = localplr.Character.HumanoidRootPart.CFrame
+
+                            repeat
+                                task.wait()
+                                localplr.Character.HumanoidRootPart.CFrame = v:FindFirstChild("Button"):FindFirstChild("Button").CFrame
+                                keypress(0x45)
+                                keyrelease(0x45)
+                            until v:FindFirstChild("Crates"):FindFirstChild("Main_JarPackager_Crate") == nil
+
+                            localplr.Character.HumanoidRootPart.CFrame = oldPosition
+                        end
+                    end
+                end
             end
         end
     end
-})
+end})
 
-local autoRebirthToggle = Tab:CreateToggle({
-    Name = "Auto Rebirth",
-    CurrentValue = settings.autorebirth,
-    Callback = function(Value)
-        settings.autorebirth = Value
-        if settings.autorebirth then
-            while settings.autorebirth do
-                -- Add logic for auto rebirth here
-                task.wait(5) -- Adjust the wait time as needed
+Tab:AddToggle({Name = "Auto blend",Default = settings["autoblender"],Callback = function(Value)
+    settings["autoblender"] = Value
+    if settings["autoblender"] == true then
+        while settings["autoblender"] == true do
+            task.wait()
+            for i, v in pairs(plot.Purchases:GetChildren()) do
+                if string.find(v.Name, "Blender") then
+                    if v:FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("ActivateBlender") and v:FindFirstChild("ActivationLight").BrickColor == BrickColor.new("Lime green") then
+                        if localplr.Character and localplr.Character.HumanoidRootPart and localplr.Character.Humanoid.Health == 100 then
+                            local oldPosition = localplr.Character.HumanoidRootPart.CFrame
+
+                            ```lua
+                            repeat
+                                task.wait()
+                                localplr.Character.HumanoidRootPart.CFrame = v:FindFirstChild("Button").CFrame
+                                keypress(0x45)
+                                keyrelease(0x45)
+                            until v:FindFirstChild("ActivationLight").BrickColor ~= BrickColor.new("Lime green")
+
+                            localplr.Character.HumanoidRootPart.CFrame = oldPosition
+                        end
+                    end
+                end
             end
         end
     end
-})
+end})
 
-Rayfield:CreateButton({
-    Name = "Reset Settings",
-    Callback = function()
-        settings = {
-            autoobby = false,
-            obbycooldown = 0.1,
-            autojar = false,
-            autoblender = false,
-            autosendcrate = false,
-            autobuy = false,
-            includeupgraders = true,
-            buycooldown = 1,
-            autogetdrops = false,
-            autorebirth = false,
-            fastarm = false,
-        }
-        autoobbyToggle:SetValue(settings.autoobby)
-        obbycooldownSlider:SetValue(settings.obbycooldown)
-        autobuyToggle:SetValue(settings.autobuy)
-        includeUpgradersToggle:SetValue(settings.includeupgraders)
-        fastArmToggle:SetValue(settings.fastarm)
-        autoGetDropsToggle:SetValue(settings.autogetdrops)
-        autoRebirthToggle:SetValue(settings.autorebirth)
+Tab:AddToggle({Name = "Auto drops",Default = settings["autogetdrops"],Callback = function(Value)
+    settings["autogetdrops"] = Value
+    if settings["autogetdrops"] == true then
+        while settings["autogetdrops"] == true do
+            task.wait()
+            for i, v in pairs(game.Workspace.RandomCrateDropsFolder:GetChildren()) do
+                if v:FindFirstChild("Box") and v:FindFirstChild("Box"):FindFirstChild("TouchInterest") then
+                    firetouchinterest(v:FindFirstChild("Box"), localplr.Character.HumanoidRootPart, 0)
+                    firetouchinterest(v:FindFirstChild("Box"), localplr.Character.HumanoidRootPart, 1)
+                end
+            end
+        end
     end
-})
+end})
 
-Rayfield:CreateButton({
-    Name = "Close",
-    Callback = function()
-        Rayfield:Close()
+Tab:AddToggle({Name = "Auto Rebirth",Default = settings["autorebirth"],Callback = function(Value)
+    settings["autorebirth"] = Value
+    if settings["autorebirth"] == true then
+        while settings["autorebirth"] == true do
+            task.wait()
+            coroutine.resume(coroutine.create(function()
+                firetouchinterest(plot.RebirthButtons:WaitForChild("RebirthButton").Button, localplr.Character.HumanoidRootPart, 0)
+                firetouchinterest(plot.RebirthButtons:WaitForChild("RebirthButton").Button, localplr.Character.HumanoidRootPart, 1)
+                --game.ReplicatedStorage.Remotes.Event.Rebirth:FireServer(true)
+            end))
+        end
     end
-})
+end})
+
+Tab:AddToggle({Name = "Fast Arm ( maybe not working )",Default = settings["fastarm"],Callback = function(Value)
+    settings["fastarm"] = Value
+    if settings["fastarm"] == true then
+        while settings["fastarm"] == true do
+            task.wait()
+            game:GetService("ReplicatedStorage").Remotes.Event.Animations.moveArm:FireServer()
+        end
+    end
+end})
+
+Tab:AddButton({Name = "Redeem All Code ( +3 Codes )",Callback = function()
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("PartyTime!")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("1yearfactory!")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("DaveThePodiumMan!")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("ABX")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("SpringLoaded")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("IceRockSkip")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("ImAWall")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("NotThatHard")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("RedSoilEntry")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("DevPapers")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("johan")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("HauntedSmoothie")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("7Rose10KRebirths")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("25MVisits")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("SisterPlanet")
+    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("SlushSmoothie")
+end})
+
+local ws = Instance.new("ScreenGui")
+ws.Parent = game:GetService("CoreGui")
+
+local wsf = Instance.new("Frame")
+wsf.Parent = ws
+wsf.Background Color3.new(355,355,355)
+wsf.Size = UDim2.new(1, 0, 1, 0)
+ws.Enabled = false
+
+Tab:AddToggle({Name = "White Screen / Anti Lag",Default = false,Callback = function(Value)
+    ws.Enabled = Value
+end})
