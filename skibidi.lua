@@ -23,36 +23,25 @@ local settings = {
     ["autogetdrops"] = false,
     ["autorebirth"] = false,
     ["fastarm"] = false,
-    ["delay"] = 1,  -- Added delay setting
 }
 
 OrionLib:MakeNotification({Name = "Successfully initialized plot!",Content = "All farming features are now available",Image = "rbxassetid://4483345998",Time = 5})
 
--- Input box for setting delay
-Tab:AddTextbox({
-    Name = "Set Delay (seconds)",
-    Default = tostring(settings["delay"]),
-    TextDisappear = true,
-    Callback = function(Value)
-        settings["delay"] = tonumber(Value) or 1  -- Update delay setting
-    end
-})
-
 local autoobbyToggle = Tab:AddToggle({Name = "Auto obby",Default = settings["autoobby"],Callback = function(Value)
-    settings["autoobby"] = Value
+	settings["autoobby"] = Value
     if settings["autoobby"] == true then
         while settings["autoobby"] == true and localplr.Character and localplr.Character.Head and localplr.Character.Humanoid.Health == 100 do
             firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.HardObby.Finish.Button, 0)
             firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.HardObby.Finish.Button, 1)
             firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.EasyObby.Finish.Button, 0)
             firetouchinterest(localplr.Character.Head, game.Workspace.Obbies.EasyObby.Finish.Button, 1)
-            task.wait(settings["obbycooldown"] + settings["delay"])  -- Use delay here
+            localplr.Character.HumanoidRootPart.CFrame = CFrame.new(-163, 6, 119)
+            task.wait(60)
         end
     end
 end})
-
 local obbycooldownSlider = Tab:AddSlider({Name = "Set obby cooldown",Min = 0,Max = 10,Default = settings["obbycooldown"],Color = Color3.fromRGB(255,255,255),Increment = 0.1,ValueName = "cooldown",Callback = function(Value)
-    settings["obbycooldown"] = Value
+	settings["obbycooldown"] = Value
 end});
 
 local autobuyToggle = Tab:AddToggle({
@@ -62,67 +51,66 @@ local autobuyToggle = Tab:AddToggle({
         settings["autobuy"] = Value
         if settings["autobuy"] == true then
             while settings["autobuy"] and localplr.Character and localplr.Character.Humanoid.Health == 100 do
-                task.wait(settings["buycooldown"] + settings["delay"])  -- Use delay here
-                if settings["includeupgraders"] == false then
-                    for i, v in pairs(plot.PurchaseButtons:GetDescendants()) do
-                        if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) then
-                            local button1 = v
-                            local bCFrame1 = v.CFrame
-                            coroutine.resume(coroutine.create(function()
-                                button1.CanCollide = false
-                                button1.Transparency = 1
-                                button1.CFrame = localplr.Character.HumanoidRootPart.CFrame
-                                task.wait(settings["buycooldown"]/2)
-                                button1.CFrame = bCFrame1
-                                button1.Transparency = 0
-                                button1.CanCollide = true 
-                            end))
-                        end                
+                task.wait(settings["buycooldown"])
+                    if settings["includeupgraders"] == false then
+                        for i, v in pairs(plot.PurchaseButtons:GetDescendants()) do
+                            if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) --[[and v.PurchaseBillboard.Price.Text ~= "Gamepass" and v.Parent.Name ~= "Rainbow Upgrader" and v.Parent.Name ~= "Rainbow Gem Upgrader" and v.Parent.Name ~= "Toggle Door Gamepass" and v.Parent.Name ~= "Toggle Door Gamepass 2" and v.Parent.Name ~= "Toggle Door Gamepass Event" and v.Parent.Name ~= "Gold Blender" and v.Parent.Name ~= "Gold Dropper 1" and v.Parent.Name ~= "Gold Dropper 2" and v.Parent.Name ~= "Gold Dropper 3"]] then
+                                local button1 = v
+                                local bCFrame1 = v.CFrame
+                                coroutine.resume(coroutine.create(function()
+                                    button1.CanCollide = false
+                                    button1.Transparency = 1
+                                    button1.CFrame = localplr.Character.HumanoidRootPart.CFrame
+                                    task.wait(settings["buycooldown"]/2)
+                                    button1.CFrame = bCFrame1
+                                    button1.Transparency = 0
+                                    button1.CanCollide = true 
+                                end))
+                            end                
+                        end
+                    elseif settings["includeupgraders"] == true then
+                        for i, v in pairs(plot.PurchaseButtons:GetDescendants()) do
+                            if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) --[[and v.PurchaseBillboard.Price.Text ~= "Gamepass" and v.Parent.Name ~= "Rainbow Upgrader" and v.Parent.Name ~= "Rainbow Gem Upgrader" and v.Parent.Name ~= "Toggle Door Gamepass" and v.Parent.Name ~= "Toggle Door Gamepass 2" and v.Parent.Name ~= "Toggle Door Gamepass Event" and v.Parent.Name ~= "Gold Blender" and v.Parent.Name ~= "Gold Dropper 1" and v.Parent.Name ~= "Gold Dropper 2" and v.Parent.Name ~= "Gold Dropper 3"]] then
+                                local button1 = v
+                                local bCFrame1 = v.CFrame
+                                coroutine.resume(coroutine.create(function()
+                                    button1.CanCollide = false
+                                    button1.Transparency = 1
+                                    button1.CFrame = localplr.Character.HumanoidRootPart.CFrame
+                                    task.wait(settings["buycooldown"]/2)
+                                    button1.CFrame = bCFrame1
+                                    button1.Transparency = 0
+                                    button1.CanCollide = true 
+                                end))
+                            end                
+                        end
+                        for i, v in pairs(plot.UpgradeButtons:GetDescendants()) do
+                            if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) then
+                                local button2 = v
+                                local bCFrame2 = v.CFrame
+                                coroutine.resume(coroutine.create(function()
+                                    button2.CanCollide = false
+                                    button2.Transparency = 1
+                                    button2.CFrame = localplr.Character.HumanoidRootPart.CFrame
+                                    task.wait(settings["buycooldown"]/2)
+                                    button2.CFrame = bCFrame2
+                                    button2.Transparency = 0
+                                    button2.CanCollide = true 
+                                end))
+                            end                
+                        end
                     end
-                elseif settings["includeupgraders"] == true then
-                    for i, v in pairs(plot.PurchaseButtons:GetDescendants()) do
-                        if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) then
-                            local button1 = v
-                            local bCFrame1 = v.CFrame
-                            coroutine.resume(coroutine.create(function()
-                                button1.CanCollide = false
-                                button1.Transparency = 1
-                                button1.CFrame = localplr.Character.HumanoidRootPart.CFrame
-                                task.wait(settings["buycooldown"]/2)
-                                button1.CFrame = bCFrame1
-                                button1.Transparency = 0
-                                button1.CanCollide = true 
-                            end))
-                        end                
-                    end
-                    for i, v in pairs(plot.UpgradeButtons:GetDescendants()) do
-                        if v.Name == "Button" and v:FindFirstChild("TouchInterest") and v.PurchaseBillboard.Price.TextColor3 == Color3.fromRGB(114, 255, 112) then
-                            local button2 = v
-                            local bCFrame2 = v.CFrame
-                            coroutine.resume(coroutine.create(function()
-                                button2.CanCollide = false
-                                button2.Transparency = 1
-                                button2.CFrame = localplr.Character.HumanoidRootPart.CFrame
-                                task.wait(settings["buycooldown"]/2)
-                                button2.CFrame = bCFrame2
-                                button2.Transparency = 0
-                                button2.CanCollide = true 
-                            end))
-                        end                
-                    end
-                end
             end
         end
     end
 })
-
 local includeupgradersToggle = Tab:AddToggle({Name = "Include upgraders buttons",Default = settings["includeupgraders"],Callback = function(Value)
-    settings["includeupgraders"] = Value
+	settings["includeupgraders"] = Value
 end})
-
 local buycooldownSlider = Tab:AddSlider({Name = "Set buy cooldown",Min = 1,Max = 10,Default = settings["buycooldown"],Color = Color3.fromRGB(255,255,255),Increment = 0.1,ValueName = "cooldown",Callback = function(Value)
-    settings["buycooldown"] = Value
+	settings["buycooldown"] = Value
 end});
+
 
 local autojarToggle = Tab:AddToggle({Name = "Auto jar ( wip )",Default = settings["autojar"],Callback = function(Value)
     settings["autojar"] = Value
@@ -154,8 +142,7 @@ local autojarToggle = Tab:AddToggle({Name = "Auto jar ( wip )",Default = setting
                 end
                 if v.Name == "Basement_JarFactory" and localplr.leaderstats.Rebirths.Value >= 6 then
                     if v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("OpenDoorPrompt") and v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Cooldown") then
-                        local doorPrompt = v:Find ```lua
-FirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("OpenDoorPrompt")
+                        local doorPrompt = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("OpenDoorPrompt")
                         local cooldownGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Cooldown")
                         local arrowGui = v:FindFirstChild("Button"):FindFirstChild("Button"):FindFirstChild("Attachment"):FindFirstChild("Arrow")
 
@@ -228,6 +215,7 @@ Tab:AddToggle({Name = "Auto send crate ( wip )",Default = settings["autosendcrat
 end})
 
 Tab:AddToggle({Name = "Auto blend",Default = settings["autoblender"],Callback = function(Value)
+
     settings["autoblender"] = Value
     if settings["autoblender"] == true then
         while settings["autoblender"] == true do
@@ -238,7 +226,6 @@ Tab:AddToggle({Name = "Auto blend",Default = settings["autoblender"],Callback = 
                         if localplr.Character and localplr.Character.HumanoidRootPart and localplr.Character.Humanoid.Health == 100 then
                             local oldPosition = localplr.Character.HumanoidRootPart.CFrame
 
-                            ```lua
                             repeat
                                 task.wait()
                                 localplr.Character.HumanoidRootPart.CFrame = v:FindFirstChild("Button").CFrame
@@ -296,32 +283,33 @@ end})
 
 Tab:AddButton({Name = "Redeem All Code ( +3 Codes )",Callback = function()
     localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("PartyTime!")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("1yearfactory!")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("DaveThePodiumMan!")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("ABX")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("SpringLoaded")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("IceRockSkip")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("ImAWall")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("NotThatHard")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("RedSoilEntry")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("DevPapers")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("johan")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("HauntedSmoothie")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("7Rose10KRebirths")
-    localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("25MVisits")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("1yearfactory!")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("DaveThePodiumMan!")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("ABX")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("SpringLoaded")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("IceRockSkip")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("ImAWall")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("NotThatHard")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("RedSoilEntry")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("DevPapers")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("johan")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("HauntedSmoothie")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("7Rose10KRebirths")
+	localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("25MVisits")
     localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("SisterPlanet")
     localplr.PlayerGui.MainGui.Settings.Codes.RedeemCodeScript.Remote:FireServer("SlushSmoothie")
 end})
+
 
 local ws = Instance.new("ScreenGui")
 ws.Parent = game:GetService("CoreGui")
 
 local wsf = Instance.new("Frame")
 wsf.Parent = ws
-wsf.Background Color3.new(355,355,355)
+wsf.BackgroundColor3 = Color3.new(355,355,355)
 wsf.Size = UDim2.new(1, 0, 1, 0)
 ws.Enabled = false
 
 Tab:AddToggle({Name = "White Screen / Anti Lag",Default = false,Callback = function(Value)
-    ws.Enabled = Value
+	ws.Enabled = Value
 end})
